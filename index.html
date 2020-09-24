@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Salesforce Id string generator</title>
+</head>
+
+<body>
+    <input type="file" name="inputfile" id="inputfile">
+    <br>
+    <pre id="output"></pre>
+    <script type="text/javascript">
+        document.getElementById('inputfile').addEventListener('change', function () {
+            let fr = new FileReader();
+            let finalStr = '';
+            fr.onload = function () {
+                let doc = JSON.parse(fr.result);
+                doc = doc.map(x => x.ID).reduce((all, one, i) => {
+                    const ch = Math.floor(i / 100);
+                    all[ch] = [].concat((all[ch] || []), one);
+                    return all
+                }, []);
+                finalStr = doc.map(x => x.reduce((acc, x1) => '\'' + x1 + '\',' + acc, '\'').slice(0, -2)).reduce((acc2, x2) => (acc2 + x2 + '\n\n'), '');
+                document.getElementById('output').textContent = finalStr;
+            }
+            fr.readAsText(this.files[0]);
+        });
+    </script>
+</body>
+
+</html>
